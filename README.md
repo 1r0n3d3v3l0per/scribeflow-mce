@@ -24,11 +24,11 @@ To ensure proper functionality, the TinyMCE Toolbar Plugin requires the followin
 - TinyMCE 5.0 or later
 - TinyMCE 6.0 or later
 
-## Installation
+## Installation for DeepL
 
 To use the TinyMCE Toolbar Plugin with TinyMCE 4, 5, or 6, follow these steps:
 
-1. Download the plugin package from the "Release" section of this GitHub repository.
+1. Download the DeepL plugin package from the "Release" section of the GitHub repository.
 
 2. Copy the plugin file into your project folder, in the appropriate path for your environment.
 
@@ -41,9 +41,46 @@ To use the TinyMCE Toolbar Plugin with TinyMCE 4, 5, or 6, follow these steps:
 
 ```javascript
 tinymce.init({
-  toolbar: 'deepl',
-  plugins: 'deepl',
+  toolbar: 'scribeflowdeepl',
+  plugins: 'scribeflowdeepl',
+  // Other configuration options for scribeflow DeepL
+});
+```
+
+```javascript
+tinymce.init({
+  toolbar: 'customPlugin',
+  plugins: 'customPlugin',
+  customPlugin_options: {
+    // Custom plugin options
+  },
   // Other configuration options
+});
+```
+
+## Installation for OpenAI
+
+To use the TinyMCE Toolbar Plugin with TinyMCE 4, 5, or 6, follow these steps:
+
+1. Download the OpenAI plugin package from the "Release" section of the GitHub repository.
+
+2. Copy the plugin file into your project folder, in the appropriate path for your environment.
+
+3. Obtain your OpenAI API key from the OpenAI website. 
+
+4. Include the plugin file in your HTML code, after including TinyMCE:
+
+```html
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="path/to/plugin.js"></script>
+```
+
+```javascript
+tinymce.init({
+  toolbar: 'scribeflowopenai',
+  plugins: 'scribeflowopenai',
+  // Other configuration options scribeflow for OpenAI
 });
 ```
 
