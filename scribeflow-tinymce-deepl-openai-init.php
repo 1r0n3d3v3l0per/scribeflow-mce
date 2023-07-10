@@ -51,10 +51,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 
 <head>
   <script src="https://cdn.tiny.cloud/1/INSERT-API-KEY/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
   <script>
     tinymce.init({
@@ -62,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       language: "it",
       editor_deselector: "mceNoEditor",
       plugins: "advlist anchor autolink autoresize autosave bbcode charmap code codesample directionality emoticons fullpage fullscreen help hr image imagetools importcss insertdatetime legacyoutput link lists media nonbreaking pagebreak paste preview print save searchreplace tabfocus table template textcolor textpattern toc visualblocks visualchars wordcount",
-      toolbar: "formatselect | bold italic strikethrough forecolor backcolor | emoticons | deepl | openai | link | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat | link image media insertfile",
+      toolbar: "formatselect | bold italic strikethrough forecolor backcolor | emoticons | scribeflowdeepl | scribeflowopenai | link | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat | link image media insertfile",
       relative_urls: false,
       remove_script_host: false,
 
@@ -158,7 +159,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         });
 
 
-        editor.ui.registry.addMenuButton("deepl", {
+        editor.ui.registry.addMenuButton("scribeflowdeepl", {
           text: getTranslationText(),
           fetch: function (callback) {
             var items = [];
@@ -201,7 +202,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
       });
 
-      editor.ui.registry.addButton("openai", {
+      editor.ui.registry.addButton("scribeflow", {
         text: "Genera con OpenAI",
         onAction: function() {
           var apiKey = "TOKEN_API_OPENAI";
