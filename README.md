@@ -60,7 +60,7 @@ tinymce.init({
 
 ## Installation for OpenAI
 
-To use the TinyMCE Toolbar Plugin with TinyMCE 4, 5, or 6, follow these steps:
+To use the scribeflow-mce Toolbar Plugin with TinyMCE 4, 5, or 6, follow these steps:
 
 1. Download the OpenAI plugin package from the "Release" section of the GitHub repository.
 
@@ -107,7 +107,7 @@ Questo plugin personalizzato è stato creato per integrare una nuova funzionalit
 
 ## Funzionalità
 
-Il plugin della toolbar di TinyMCE offre le seguenti funzionalità:
+Il plugin della toolbar di TinyMCE (scribeflow-mce) offre le seguenti funzionalità:
 
 1. **Traduzione con DeepL**: Il plugin integra un menu nella toolbar di TinyMCE che consente di tradurre rapidamente il testo selezionato utilizzando il servizio di traduzione di DeepL. È possibile selezionare la lingua di destinazione desiderata e ottenere una traduzione accurata e affidabile.
 
@@ -125,7 +125,7 @@ Il plugin della toolbar di TinyMCE richiede quanto segue per funzionare corretta
 - TinyMCE 5.0 o versione successiva
 - TinyMCE 6.0 o versione successiva
 
-## Installazione
+## Installazione di DeepL
 
 Per utilizzare il plugin della toolbar di TinyMCE con TinyMCE 4, 5 o 6, segui questi passaggi:
 
@@ -141,9 +141,9 @@ Per utilizzare il plugin della toolbar di TinyMCE con TinyMCE 4, 5 o 6, segui qu
 ```
 ```javascript
 tinymce.init({
-  toolbar: 'deepl',
-  plugins: 'deepl',
-  // Altre opzioni di configurazione
+  toolbar: 'scribeflowdeepl',
+  plugins: 'scribeflowdeepl',
+  // Altre opzioni di configurazione di scribeflow per DeepL
 });
 ```
 
@@ -153,6 +153,43 @@ tinymce.init({
   plugins: 'customPlugin',
   customPlugin_options: {
     // Opzioni del plugin personalizzate 
+  },
+  // Altre opzioni di configurazione
+});
+```
+
+## Installation for OpenAI
+
+Per utilizzare il plug-in scribeflow-mce Toolbar con TinyMCE 4, 5 o 6, attenersi alla seguente procedura:
+
+1. Scarica il pacchetto del plug-in OpenAI dalla sezione "Release" del repository GitHub.
+
+2. Copia il file del plug-in nella cartella del progetto, nel percorso appropriato per il tuo ambiente.
+
+3. Genera la tua chiave API OpenAI dal sito Web OpenAI.
+
+4. Includere il file del plugin nel codice HTML, dopo aver incluso TinyMCE:
+
+```html
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="path/to/plugin.js"></script>
+```
+
+```javascript
+tinymce.init({
+  toolbar: 'scribeflowopenai',
+  plugins: 'scribeflowopenai',
+  // Altre opzioni di configurazione scribeflow per OpenAI
+});
+```
+
+```javascript
+tinymce.init({
+  toolbar: 'customPlugin',
+  plugins: 'customPlugin',
+  customPlugin_options: {
+    // Opzioni plug-in personalizzate
   },
   // Altre opzioni di configurazione
 });
