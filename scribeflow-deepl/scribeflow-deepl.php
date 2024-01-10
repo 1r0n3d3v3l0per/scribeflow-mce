@@ -60,7 +60,7 @@
         // Funzione per ottenere il testo di traduzione in base alla lingua corrente
         // Function to get the translation text based on the current language
         function getTranslationText() {
-          var translateTexts = {
+          var translationTexts = {
             bg: "Преведи с DeepL",
             cs: "Přeložit pomocí DeepL",
             da: "Oversæt med DeepL",
