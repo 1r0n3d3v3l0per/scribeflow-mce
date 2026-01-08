@@ -1,8 +1,8 @@
 # scribeflow-mce
-# TinyMCE Toolbar with Deepl and OpenAI
+# TinyMCE Toolbar with DeepL and OpenAI
 ## TinyMCE Toolbar Plugin
 
-This custom plugin was created to integrate a new functionality into the TinyMCE toolbar, a rich text editor library (WYSIWYG). The plugin is compatible with versions 4, 5, and 6 of TinyMCE.
+This custom plugin was created to integrate a new functionality into the TinyMCE toolbar, a rich text editor library (WYSIWYG). The plugin is compatible with TinyMCE versions 5, 6, and 7.
 
 ## Features
 
@@ -10,7 +10,7 @@ The TinyMCE Toolbar Plugin offers the following features:
 
 1. **Translation with DeepL**: The plugin integrates a menu in the TinyMCE toolbar that allows you to quickly translate the selected text using the DeepL translation service. You can select the desired target language and obtain an accurate and reliable translation.
 
-2. **Generation with OpenAI:** Use the "OpenAI" button in the toolbar to generate text using the OpenAI API. The generated text is based on the current prompt in the TinyMCE editor and is inserted at the cursor position.
+2. **Generation with OpenAI:** Use the "OpenAI" button in the toolbar to generate text using the OpenAI API (GPT-4o-mini). The generated text is based on the current prompt in the TinyMCE editor and is inserted at the cursor position.
 
 3. **Toolbar Customization:** In addition to quick element insertion, the plugin enables you to customize the TinyMCE toolbar. You can add, remove, or rearrange buttons in the toolbar to fit the user's preferences.
 
@@ -20,13 +20,13 @@ The TinyMCE Toolbar Plugin offers the following features:
 
 To ensure proper functionality, the TinyMCE Toolbar Plugin requires the following:
 
-- TinyMCE 4.0 or later
 - TinyMCE 5.0 or later
 - TinyMCE 6.0 or later
+- TinyMCE 7.0 or later (recommended)
 
 ## Installation for DeepL
 
-To use the TinyMCE Toolbar Plugin with TinyMCE 4, 5, or 6, follow these steps:
+To use the TinyMCE Toolbar Plugin with TinyMCE 5, 6, or 7, follow these steps:
 
 1. Download the DeepL plugin package from the "Release" section of the GitHub repository.
 
@@ -35,65 +35,76 @@ To use the TinyMCE Toolbar Plugin with TinyMCE 4, 5, or 6, follow these steps:
 3. Include the plugin file in your HTML code, after including TinyMCE:
 
 ```html
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.tiny.cloud/1/your-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 <script src="path/to/plugin.js"></script>
 ```
 
 ```javascript
 tinymce.init({
+  selector: 'textarea',
   toolbar: 'scribeflowdeepl',
   plugins: 'scribeflowdeepl',
   // Other configuration options for scribeflow DeepL
 });
 ```
 
+### DeepL API Authentication
+
+The plugin uses the DeepL API v2 with HTTP header authentication:
+
 ```javascript
-tinymce.init({
-  toolbar: 'customPlugin',
-  plugins: 'customPlugin',
-  customPlugin_options: {
-    // Custom plugin options
-  },
-  // Other configuration options
-});
+headers: {
+  "Authorization": "DeepL-Auth-Key YOUR_API_KEY",
+  "Content-Type": "application/json"
+}
 ```
 
 ## Installation for OpenAI
 
-To use the scribeflow-mce Toolbar Plugin with TinyMCE 4, 5, or 6, follow these steps:
+To use the scribeflow-mce Toolbar Plugin with TinyMCE 5, 6, or 7, follow these steps:
 
 1. Download the OpenAI plugin package from the "Release" section of the GitHub repository.
 
 2. Copy the plugin file into your project folder, in the appropriate path for your environment.
 
-3. Obtain your OpenAI API key from the OpenAI website. 
+3. Obtain your OpenAI API key from the OpenAI website.
 
 4. Include the plugin file in your HTML code, after including TinyMCE:
 
 ```html
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.tiny.cloud/1/your-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 <script src="path/to/plugin.js"></script>
 ```
 
 ```javascript
 tinymce.init({
+  selector: 'textarea',
   toolbar: 'scribeflowopenai',
   plugins: 'scribeflowopenai',
   // Other configuration options scribeflow for OpenAI
 });
 ```
 
+### OpenAI API (Chat Completions)
+
+The plugin uses the OpenAI Chat Completions API with the GPT-4o-mini model:
+
 ```javascript
-tinymce.init({
-  toolbar: 'customPlugin',
-  plugins: 'customPlugin',
-  customPlugin_options: {
-    // Custom plugin options
+fetch("https://api.openai.com/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
   },
-  // Other configuration options
-});
+  body: JSON.stringify({
+    model: "gpt-4o-mini",
+    messages: [{ role: "user", content: promptText }],
+    max_tokens: 1000
+  })
+})
 ```
+
+You can change the model to `gpt-4o` for higher quality or `gpt-4-turbo` for faster responses.
 
 ## Plugin Showcase: Examples of Extraordinary Features!
 ![TinyMCE Toolbar Plugin by irn3 & Sara](https://i.imgur.com/6KL9Zhf.png)
@@ -101,9 +112,11 @@ tinymce.init({
 ![TinyMCE Toolbar Plugin by irn3 & Sara](https://i.imgur.com/nvwult0.png)
 
 
-## Toolbar TinyMCE con Deepl e OpenAI
+---
 
-Questo plugin personalizzato è stato creato per integrare una nuova funzionalità nella toolbar di TinyMCE, una libreria di editor di testo ricco (WYSIWYG). Il plugin è compatibile con le versioni 4, 5 e 6 di TinyMCE. Inoltre, consentendo la generazione di testo utilizzando OpenAI tramite un prompt di ingresso.
+## Toolbar TinyMCE con DeepL e OpenAI
+
+Questo plugin personalizzato è stato creato per integrare una nuova funzionalità nella toolbar di TinyMCE, una libreria di editor di testo ricco (WYSIWYG). Il plugin è compatibile con le versioni 5, 6 e 7 di TinyMCE. Inoltre, consentendo la generazione di testo utilizzando OpenAI tramite un prompt di ingresso.
 
 ## Funzionalità
 
@@ -111,7 +124,7 @@ Il plugin della toolbar di TinyMCE (scribeflow-mce) offre le seguenti funzionali
 
 1. **Traduzione con DeepL**: Il plugin integra un menu nella toolbar di TinyMCE che consente di tradurre rapidamente il testo selezionato utilizzando il servizio di traduzione di DeepL. È possibile selezionare la lingua di destinazione desiderata e ottenere una traduzione accurata e affidabile.
 
-2. **Generazione con OpenAI**: Utilizza il pulsante "OpenAI" nella toolbar per generare testo utilizzando l'API di OpenAI. Il testo generato si basa sul prompt attuale nell'editor TinyMCE e viene inserito nella posizione del cursore.
+2. **Generazione con OpenAI**: Utilizza il pulsante "OpenAI" nella toolbar per generare testo utilizzando l'API di OpenAI (GPT-4o-mini). Il testo generato si basa sul prompt attuale nell'editor TinyMCE e viene inserito nella posizione del cursore.
 
 3. **Personalizzazione della toolbar**: Oltre all'inserimento rapido di elementi, il plugin consente di personalizzare la toolbar di TinyMCE. È possibile aggiungere, rimuovere o riorganizzare i pulsanti nella toolbar per adattarla alle preferenze dell'utente.
 
@@ -121,13 +134,13 @@ Il plugin della toolbar di TinyMCE (scribeflow-mce) offre le seguenti funzionali
 
 Il plugin della toolbar di TinyMCE richiede quanto segue per funzionare correttamente:
 
-- TinyMCE 4.0 o versione successiva
 - TinyMCE 5.0 o versione successiva
 - TinyMCE 6.0 o versione successiva
+- TinyMCE 7.0 o versione successiva (consigliato)
 
 ## Installazione di DeepL
 
-Per utilizzare il plugin della toolbar di TinyMCE con TinyMCE 4, 5 o 6, segui questi passaggi:
+Per utilizzare il plugin della toolbar di TinyMCE con TinyMCE 5, 6 o 7, segui questi passaggi:
 
 1. Scarica il pacchetto del plugin dalla sezione "Release" di questo repository su GitHub.
 
@@ -136,31 +149,33 @@ Per utilizzare il plugin della toolbar di TinyMCE con TinyMCE 4, 5 o 6, segui qu
 3. Includi il file del plugin nel tuo codice HTML, dopo aver incluso TinyMCE:
 
 ```html
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.tiny.cloud/1/your-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 <script src="path/to/plugin.js"></script>
 ```
+
 ```javascript
 tinymce.init({
+  selector: 'textarea',
   toolbar: 'scribeflowdeepl',
   plugins: 'scribeflowdeepl',
   // Altre opzioni di configurazione di scribeflow per DeepL
 });
 ```
 
-```
-tinymce.init({
-  toolbar: 'customPlugin',
-  plugins: 'customPlugin',
-  customPlugin_options: {
-    // Opzioni del plugin personalizzate 
-  },
-  // Altre opzioni di configurazione
-});
+### Autenticazione API DeepL
+
+Il plugin utilizza l'API DeepL v2 con autenticazione tramite header HTTP:
+
+```javascript
+headers: {
+  "Authorization": "DeepL-Auth-Key LA_TUA_API_KEY",
+  "Content-Type": "application/json"
+}
 ```
 
-## Installation for OpenAI
+## Installazione di OpenAI
 
-Per utilizzare il plug-in scribeflow-mce Toolbar con TinyMCE 4, 5 o 6, attenersi alla seguente procedura:
+Per utilizzare il plug-in scribeflow-mce Toolbar con TinyMCE 5, 6 o 7, attenersi alla seguente procedura:
 
 1. Scarica il pacchetto del plug-in OpenAI dalla sezione "Release" del repository GitHub.
 
@@ -171,31 +186,41 @@ Per utilizzare il plug-in scribeflow-mce Toolbar con TinyMCE 4, 5 o 6, attenersi
 4. Includere il file del plugin nel codice HTML, dopo aver incluso TinyMCE:
 
 ```html
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.tiny.cloud/1/your-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 <script src="path/to/plugin.js"></script>
 ```
 
 ```javascript
 tinymce.init({
+  selector: 'textarea',
   toolbar: 'scribeflowopenai',
   plugins: 'scribeflowopenai',
   // Altre opzioni di configurazione scribeflow per OpenAI
 });
 ```
 
+### API OpenAI (Chat Completions)
+
+Il plugin utilizza l'API Chat Completions di OpenAI con il modello GPT-4o-mini:
+
 ```javascript
-tinymce.init({
-  toolbar: 'customPlugin',
-  plugins: 'customPlugin',
-  customPlugin_options: {
-    // Opzioni plug-in personalizzate
+fetch("https://api.openai.com/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer LA_TUA_API_KEY",
+    "Content-Type": "application/json"
   },
-  // Altre opzioni di configurazione
-});
+  body: JSON.stringify({
+    model: "gpt-4o-mini",
+    messages: [{ role: "user", content: promptText }],
+    max_tokens: 1000
+  })
+})
 ```
 
-# Plugin Showcase: Esempi di funzionalità straordinarie!
+Puoi cambiare il modello in `gpt-4o` per una qualità superiore o `gpt-4-turbo` per risposte più veloci.
+
+## Plugin Showcase: Esempi di funzionalità straordinarie!
 ![TinyMCE Toolbar Plugin by irn3 & Sara](https://i.imgur.com/6KL9Zhf.png)
 
 ![TinyMCE Toolbar Plugin by irn3 & Sara](https://i.imgur.com/nvwult0.png)

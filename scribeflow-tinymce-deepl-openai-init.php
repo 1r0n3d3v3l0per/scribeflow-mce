@@ -20,13 +20,23 @@ if ($result && mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_assoc($result);
     $token = $row['data_4'];
 } else {
-    echo "No results";
+    $token = "";
+}
+
+// Genero CSRF token per sicurezza
+// Generate CSRF token for security
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 // Visualizzo il modulo per inserire il token API
 // I display the form to enter the API token
 echo <<<HTML
 <form action="process.php" method="POST">
+    <input type="hidden" name="csrf_token" value="{$_SESSION['csrf_token']}">
     <label for="api_token">API Token:</label>
     <input type="text" name="api_token" id="api_token" required>
     <input type="submit" value="Save">
@@ -36,16 +46,19 @@ HTML;
 // Elaboro l'invio del modulo
 // I process the form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Sanitize and validate the user input
-    $api_token = mysqli_real_escape_string($dbh, $_POST["api_token"]);
-    $api_token = trim($api_token);
-    // Eseguo una validazione aggiuntiva, se necessario
-    // I perform additional validation, if necessary
+    // Verifico CSRF token
+    // Verify CSRF token
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('Invalid CSRF token');
+    }
 
-    // Memorizzo il token API nel database
-    // I store the API token in the database
-    $sql_store_token = "INSERT INTO tokens (data_1, data_4) VALUES ('tokens', '$api_token')";
-    mysqli_query($dbh, $sql_store_token);
+    // Uso prepared statement per sicurezza
+    // Use prepared statement for security
+    $api_token = trim($_POST["api_token"]);
+    $stmt = mysqli_prepare($dbh, "INSERT INTO tokens (data_1, data_4) VALUES ('tokens', ?)");
+    mysqli_stmt_bind_param($stmt, "s", $api_token);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 }
 ?>
 
@@ -54,19 +67,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="en">
 
 <head>
-  <script src="https://cdn.tiny.cloud/1/INSERT-API-KEY/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.tiny.cloud/1/INSERT-API-KEY/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
   <script>
     tinymce.init({
       selector: "textarea",
       language: "it",
       editor_deselector: "mceNoEditor",
-      plugins: "advlist anchor autolink autoresize autosave bbcode charmap code codesample directionality emoticons fullpage fullscreen help hr image imagetools importcss insertdatetime legacyoutput link lists media nonbreaking pagebreak paste preview print save searchreplace tabfocus table template textcolor textpattern toc visualblocks visualchars wordcount",
-      toolbar: "formatselect | bold italic strikethrough forecolor backcolor | emoticons | scribeflowdeepl | scribeflowopenai | link | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat | link image media insertfile",
+      plugins: "advlist anchor autolink autoresize autosave charmap code codesample directionality emoticons fullscreen help image importcss insertdatetime link lists media nonbreaking pagebreak preview save searchreplace table visualblocks visualchars wordcount",
+      toolbar: "blocks | bold italic strikethrough forecolor backcolor | emoticons | scribeflowdeepl | scribeflowopenai | link | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat | link image media",
       relative_urls: false,
       remove_script_host: false,
-
+      highlight_on_focus: false,
       image_advtab: true,
       height: 400,
       max_height: 500,
@@ -180,9 +192,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     fetch("https://api-free.deepl.com/v2/translate", {
                       method: "POST",
                       headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
+                        "Authorization": "DeepL-Auth-Key <?php echo $token; ?>",
+                        "Content-Type": "application/json"
                       },
-                      body: `text=${selectedText}&target_lang=${languages[i].code}&auth_key=<?php echo $token; ?>`
+                      body: JSON.stringify({
+                        text: [selectedText],
+                        target_lang: languages[i].code
+                      })
                     })
                       .then(response => response.json())
                       .then(data => {
@@ -202,39 +218,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
       });
 
-      editor.ui.registry.addButton("scribeflow", {
+      editor.ui.registry.addButton("scribeflowopenai", {
         text: "Genera con OpenAI",
         onAction: function() {
           var apiKey = "TOKEN_API_OPENAI";
+          var promptText = editor.selection.getContent({ format: "text" }) || editor.getContent({ format: "text" });
 
-          var promptText = editor.getContent();
-
-          axios
-            .post(
-              "https://api.openai.com/v1/engines/text-davinci-003/completions",
-              {
-                prompt: promptText,
-                max_tokens: 500,
-                temperature: 1,
-                top_p: 1,
-                frequency_penalty: 0,
-                n: 1,
-                stop: null
-              },
-              {
-                headers: {
-                  Authorization: "Bearer " + apiKey,
-                  "Content-Type": "application/json"
-                }
-              }
-            )
-            .then(function(response) {
-              var generatedText = response.data.choices[0].text;
-              editor.selection.setContent(generatedText);
+          fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": "Bearer " + apiKey,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [
+                { role: "user", content: promptText }
+              ],
+              max_tokens: 1000,
+              temperature: 0.7
             })
-            .catch(function(error) {
-              console.error("Errore nella generazione del testo:", error);
-            });
+          })
+          .then(response => response.json())
+          .then(data => {
+            var generatedText = data.choices[0].message.content;
+            editor.selection.setContent(generatedText);
+          })
+          .catch(error => {
+            console.error("Errore nella generazione del testo:", error);
+          });
         }
       });
     }

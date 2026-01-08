@@ -2,18 +2,18 @@
 <html lang="en">
 
 <head>
-  <script src="https://cdn.tiny.cloud/1/INSERT-API-KEY/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="https://cdn.tiny.cloud/1/INSERT-API-KEY/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
   <script>
     tinymce.init({
       selector: "textarea",
       language: "it",
       editor_deselector: "mceNoEditor",
-      plugins: "advlist anchor autolink autoresize autosave bbcode charmap code codesample directionality emoticons fullpage fullscreen help hr image imagetools importcss insertdatetime legacyoutput link lists media nonbreaking pagebreak paste preview print save searchreplace tabfocus table template textcolor textpattern toc visualblocks visualchars wordcount",
-      toolbar: "formatselect | bold italic strikethrough forecolor backcolor | emoticons | scribeflowdeepl | scribeflowopenai | link | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat | link image media insertfile",
+      plugins: "advlist anchor autolink autoresize autosave charmap code codesample directionality emoticons fullscreen help image importcss insertdatetime link lists media nonbreaking pagebreak preview save searchreplace table visualblocks visualchars wordcount",
+      toolbar: "blocks | bold italic strikethrough forecolor backcolor | emoticons | scribeflowdeepl | link | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat | link image media",
       relative_urls: false,
       remove_script_host: false,
-
+      highlight_on_focus: false,
       image_advtab: true,
       height: 400,
       max_height: 500,
@@ -127,9 +127,13 @@
                     fetch("https://api-free.deepl.com/v2/translate", {
                       method: "POST",
                       headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
+                        "Authorization": "DeepL-Auth-Key <?php echo $token; ?>",
+                        "Content-Type": "application/json"
                       },
-                      body: `text=${selectedText}&target_lang=${languages[i].code}&auth_key=<?php echo $token; ?>`
+                      body: JSON.stringify({
+                        text: [selectedText],
+                        target_lang: languages[i].code
+                      })
                     })
                       .then(response => response.json())
                       .then(data => {
